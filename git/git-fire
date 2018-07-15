@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# Setup.
 VERSION="0.2.3"
+BRANCH_PREFIX="fire"
 
 version() {
     printf "git-fire version %s\n" "$VERSION"
@@ -9,7 +9,6 @@ version() {
     git --version
 }
 
-# Helpers.
 current_branch() {
     basename "$(git symbolic-ref HEAD)"
 }
@@ -23,11 +22,10 @@ user_email() {
 }
 
 new_branch() {
-    echo "fire-$(current_branch)-$(user_email)-$(current_epoch)"
+    echo "$BRANCH_PREFIX-$(current_branch)-$(user_email)-$(current_epoch)"
 }
 
 fire() {
-    initial_branch="$(current_branch)"
 
     git checkout -b "$(new_branch)"
 
@@ -37,7 +35,7 @@ fire() {
     git add -A
 
     if [ -z "$1" ]; then
-        message=":runner: :fire: I saved stuff there -> $(current_branch) :question:"
+        message=":runner: :fire: surviving stuff -> $(current_branch) :question:"
     else
         message="$*"
     fi
@@ -45,12 +43,12 @@ fire() {
     git commit -m "$message" --no-verify
 
     for remote in $(git remote); do
-        git push --set-upstream "${remote}" "$(current_branch)" || true
+        git push "${remote}" "$(current_branch)" || true
     done
 
     if [ "$(git stash list)" != '' ]; then
       for sha in $(git rev-list -g stash); do
-          git push origin "$sha":refs/heads/"$(initial_branch)"-stash-"$sha"
+          git push origin "$sha":refs/heads/whatever-stash-"$sha" || true
       done
     fi
 

@@ -14,7 +14,7 @@ current_branch() {
 }
 
 current_epoch() {
-    date +%a%d%h%G-%H:%M:%S--%s
+    date +%a%d%h%G-%H:%M:%S-%s
 }
 
 user_email() {
